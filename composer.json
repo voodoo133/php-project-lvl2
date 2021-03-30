@@ -1,0 +1,21 @@
+{
+    "name": "hexlet/code",
+    "authors": [
+        {
+            "name": "Anton Okhrimenko",
+            "email": "voodoo_133@mail.ru"
+        }
+    ],
+    "require": {
+        "docopt/docopt": "^1.0"
+    },
+    "bin": [
+        "bin/gendiff"
+    ],
+    "autoload": {
+        "files": [
+            "src/makeCLIInterface.php",
+            "src/genDiff.php"
+        ]
+    }
+}

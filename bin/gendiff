@@ -1,0 +1,26 @@
+#!/usr/bin/env php
+<?php  
+
+$autoloadPathV1 = '../vendor/autoload.php';
+$autoloadPathV2 = __DIR__ . "/../../../autoload.php";
+$autoloadPathV3 = __DIR__ . "\\..\\..\\..\\autoload.php";
+
+if (file_exists($autoloadPathV1)) {
+    require_once $autoloadPathV1;
+} elseif (file_exists($autoloadPathV2)) {
+    require_once $autoloadPathV2;
+} else {
+    require_once $autoloadPathV3;
+}
+
+use function Gendiff\makeCLIInterface;
+use function Gendiff\genDiff;
+
+$docoptResponse = makeCLIInterface();
+
+if (isset($docoptResponse->args['<firstFile>']) && $docoptResponse->args['<secondFile>']) {
+    $diff = genDiff($docoptResponse->args['<firstFile>'], $docoptResponse->args['<secondFile>']);
+    echo $diff;
+}
+
+?>
