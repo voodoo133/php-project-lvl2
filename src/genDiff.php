@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 namespace Gendiff;
 
@@ -43,8 +43,9 @@ function getDataFromJsonFile($pathToFile)
 
 function varToString($var)
 {
-    if (is_bool($var)) return var_export($var, true);
-    else return strval($var);
+    if (is_bool($var)) {
+        return var_export($var, true);
+    } else {
+        return strval($var);
+    }
 }
-
-?>
