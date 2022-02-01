@@ -1,4 +1,4 @@
-install:	
+cd install:	
 		composer install
 
 lint:	

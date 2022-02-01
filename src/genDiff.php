@@ -1,11 +1,21 @@
 <?php
 
-namespace Gendiff;
+namespace GenDiff;
+
+use function GenDiff\Parsers\parse;
 
 function genDiff($pathToFile1, $pathToFile2)
 {
-    $data1 = getDataFromJsonFile($pathToFile1, true);
-    $data2 = getDataFromJsonFile($pathToFile2, true);
+    $fileData1 = file_get_contents($pathToFile1);
+    $fileData2 = file_get_contents($pathToFile2);
+
+    $type = pathinfo($pathToFile1, PATHINFO_EXTENSION);
+
+    $path1Extension = pathinfo($pathToFile1)['extension'];
+    $path2Extension = pathinfo($pathToFile2)['extension'];
+
+    $data1 = parse($fileData1, $type);
+    $data2 = parse($fileData2, $type);
 
     ksort($data1);
     ksort($data2);
@@ -34,11 +44,6 @@ function genDiff($pathToFile1, $pathToFile2)
     }
 
     return "{\n" . join("\n", $resultStrArr) . "\n}\n";
-}
-
-function getDataFromJsonFile($pathToFile)
-{
-    return json_decode(file_get_contents($pathToFile), true);
 }
 
 function varToString($var)

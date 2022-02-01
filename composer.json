@@ -7,7 +7,8 @@
         }
     ],
     "require": {
-        "docopt/docopt": "^1.0"
+        "docopt/docopt": "^1.0",
+        "symfony/yaml": "^5.4"
     },
     "bin": [
         "bin/gendiff"
@@ -15,7 +16,8 @@
     "autoload": {
         "files": [
             "src/makeCLIInterface.php",
-            "src/genDiff.php"
+            "src/genDiff.php",
+            "src/Parsers.php"
         ]
     },
     "require-dev": {
