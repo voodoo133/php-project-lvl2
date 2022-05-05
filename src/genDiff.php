@@ -17,6 +17,10 @@ function genDiff($pathToFile1, $pathToFile2)
     $data1 = parse($fileData1, $type);
     $data2 = parse($fileData2, $type);
 
+    var_dump($data1);
+
+    exit();
+
     ksort($data1);
     ksort($data2);
 
