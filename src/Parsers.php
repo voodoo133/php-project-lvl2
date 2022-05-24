@@ -8,12 +8,12 @@ function parse($fileData, $type)
 {
     switch ($type) {
         case 'json':
-            return json_decode($fileData, true);
+            return json_decode($fileData, false);
             break;
 
         case 'yml':
         case 'yaml':
-            return get_object_vars(Yaml::parse($fileData, Yaml::PARSE_OBJECT_FOR_MAP));
+            return Yaml::parse($fileData, Yaml::PARSE_OBJECT_FOR_MAP);
             break;
 
         default:

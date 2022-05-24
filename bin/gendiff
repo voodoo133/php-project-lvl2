@@ -19,7 +19,7 @@ use function Gendiff\genDiff;
 $docoptResponse = makeCLIInterface();
 
 if (isset($docoptResponse->args['<firstFile>']) && $docoptResponse->args['<secondFile>']) {
-    $diff = genDiff($docoptResponse->args['<firstFile>'], $docoptResponse->args['<secondFile>']);
+    $diff = genDiff($docoptResponse->args['<firstFile>'], $docoptResponse->args['<secondFile>'], $docoptResponse->args['--format']);
     echo $diff;
 }
 

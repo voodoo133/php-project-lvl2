@@ -6,162 +6,44 @@ use function GenDiff\genDiff;
 
 class GenDiffTest extends TestCase
 {
-    protected $pathToJSONFixtures = __DIR__ . DIRECTORY_SEPARATOR . 'fixtures' . DIRECTORY_SEPARATOR . 'json';
-    protected $pathToYAMLFixtures = __DIR__ . DIRECTORY_SEPARATOR . 'fixtures' . DIRECTORY_SEPARATOR . 'yaml';
-
-    public function testGenDiffJsonSimple()
+    protected function getFixtureFile(string $format, string $type, string $fileName): string
     {
-        $pathTofile1 = $this->pathToJSONFixtures . DIRECTORY_SEPARATOR . 'simple' . DIRECTORY_SEPARATOR . 'file1.json';
-        $pathTofile2 = $this->pathToJSONFixtures . DIRECTORY_SEPARATOR . 'simple' . DIRECTORY_SEPARATOR . 'file2.json';
+        $dirs = [__DIR__, 'fixtures', $format, $type, $fileName];
 
-        $resultStrings = [
-            "{",
-            "  - follow: false",
-            "    host: hexlet.io",
-            "  - proxy: 123.234.53.22",
-            "  - timeout: 50",
-            "  + timeout: 20",
-            "  + verbose: true",
-            "}"
-        ];
-
-        $result = join("\n", $resultStrings) . "\n";
-
-        $this->assertEquals($result, genDiff($pathTofile1, $pathTofile2));
+        return implode(DIRECTORY_SEPARATOR, $dirs);
     }
 
-    public function testGenDiffYamlSimple()
+    /**
+     * @dataProvider filesProvider
+     */
+    public function testGenDiff(string $file1, string $file2, string $expectedFile): void
     {
-        $pathTofile1 = $this->pathToYAMLFixtures . DIRECTORY_SEPARATOR . 'simple' . DIRECTORY_SEPARATOR . 'file1.yml';
-        $pathTofile2 = $this->pathToYAMLFixtures . DIRECTORY_SEPARATOR . 'simple' . DIRECTORY_SEPARATOR . 'file2.yml';
-
-        $resultStrings = [
-            "{",
-            "  - follow: false",
-            "    host: hexlet.io",
-            "  - proxy: 123.234.53.22",
-            "  - timeout: 50",
-            "  + timeout: 20",
-            "  + verbose: true",
-            "}"
-        ];
-
-        $result = join("\n", $resultStrings) . "\n";
-
-        $this->assertEquals($result, genDiff($pathTofile1, $pathTofile2));
+        $this->assertEquals(file_get_contents($expectedFile), genDiff($file1, $file2));
     }
 
-    public function testGenDiffJsonRecursive()
+    public function filesProvider(): array
     {
-        $pathTofile1 = $this->pathToJSONFixtures . DIRECTORY_SEPARATOR . 'recursive' . DIRECTORY_SEPARATOR . 'file1.json';
-        $pathTofile2 = $this->pathToJSONFixtures . DIRECTORY_SEPARATOR . 'recursive' . DIRECTORY_SEPARATOR . 'file2.json';
-
-        $resultStrings = [
-            "{",
-            "    common: {",
-            "      + follow: false",
-            "        setting1: Value 1",
-            "      - setting2: 200",
-            "      - setting3: true",
-            "      + setting3: null",
-            "      + setting4: blah blah",
-            "      + setting5: {",
-            "            key5: value5",
-            "        }",
-            "        setting6: {",
-            "            doge: {",
-            "              - wow:",
-            "              + wow: so much",
-            "            }",
-            "            key: value",
-            "          + ops: vops",
-            "        }",
-            "    }",
-            "    group1: {",
-            "      - baz: bas",
-            "      + baz: bars",
-            "        foo: bar",
-            "      - nest: {",
-            "            key: value",
-            "        }",
-            "      + nest: str",
-            "    }",
-            "  - group2: {",
-            "        abc: 12345",
-            "        deep: {",
-            "            id: 45",
-            "        }",
-            "    }",
-            "  + group3: {",
-            "        deep: {",
-            "            id: {",
-            "                number: 45",
-            "            }",
-            "        }",
-            "        fee: 100500",
-            "    }",
-            "}"
+        return [
+            [
+                $this->getFixtureFile('json', 'simple', 'file1.json'), 
+                $this->getFixtureFile('json', 'simple', 'file2.json'),
+                $this->getFixtureFile('json', 'simple', 'result.txt')
+            ],
+            [
+                $this->getFixtureFile('yaml', 'simple', 'file1.yml'), 
+                $this->getFixtureFile('yaml', 'simple', 'file2.yml'),
+                $this->getFixtureFile('yaml', 'simple', 'result.txt')
+            ],
+            [
+                $this->getFixtureFile('json', 'recursive', 'file1.json'), 
+                $this->getFixtureFile('json', 'recursive', 'file2.json'),
+                $this->getFixtureFile('json', 'recursive', 'result.txt')
+            ],
+            [
+                $this->getFixtureFile('yaml', 'recursive', 'file1.yml'), 
+                $this->getFixtureFile('yaml', 'recursive', 'file2.yml'),
+                $this->getFixtureFile('yaml', 'recursive', 'result.txt')
+            ]
         ];
-
-        $result = join("\n", $resultStrings) . "\n";
-
-        $this->assertEquals($result, genDiff($pathTofile1, $pathTofile2));
-    }
-
-    public function testGenDiffYamlRecursive()
-    {
-        $pathTofile1 = $this->pathToYAMLFixtures . DIRECTORY_SEPARATOR . 'recursive' . DIRECTORY_SEPARATOR . 'file1.yml';
-        $pathTofile2 = $this->pathToYAMLFixtures . DIRECTORY_SEPARATOR . 'recursive' . DIRECTORY_SEPARATOR . 'file2.yml';
-
-        $resultStrings = [
-            "{",
-            "    common: {",
-            "      + follow: false",
-            "        setting1: Value 1",
-            "      - setting2: 200",
-            "      - setting3: true",
-            "      + setting3: null",
-            "      + setting4: blah blah",
-            "      + setting5: {",
-            "            key5: value5",
-            "        }",
-            "        setting6: {",
-            "            doge: {",
-            "              - wow:",
-            "              + wow: so much",
-            "            }",
-            "            key: value",
-            "          + ops: vops",
-            "        }",
-            "    }",
-            "    group1: {",
-            "      - baz: bas",
-            "      + baz: bars",
-            "        foo: bar",
-            "      - nest: {",
-            "            key: value",
-            "        }",
-            "      + nest: str",
-            "    }",
-            "  - group2: {",
-            "        abc: 12345",
-            "        deep: {",
-            "            id: 45",
-            "        }",
-            "    }",
-            "  + group3: {",
-            "        deep: {",
-            "            id: {",
-            "                number: 45",
-            "            }",
-            "        }",
-            "        fee: 100500",
-            "    }",
-            "}"
-        ];
-
-        $result = join("\n", $resultStrings) . "\n";
-
-        $this->assertEquals($result, genDiff($pathTofile1, $pathTofile2));
     }
 }

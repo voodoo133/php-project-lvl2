@@ -3,58 +3,71 @@
 namespace GenDiff;
 
 use function GenDiff\Parsers\parse;
+use function GenDiff\Formatters\format;
 
-function genDiff($pathToFile1, $pathToFile2)
+function genDiff($pathToFile1, $pathToFile2, $format = 'stylish')
 {
-    $fileData1 = file_get_contents($pathToFile1);
-    $fileData2 = file_get_contents($pathToFile2);
-
-    $type = pathinfo($pathToFile1, PATHINFO_EXTENSION);
-
-    $path1Extension = pathinfo($pathToFile1)['extension'];
-    $path2Extension = pathinfo($pathToFile2)['extension'];
+    [$fileData1, $type] = getFileInfo($pathToFile1);
+    [$fileData2, $type] = getFileInfo($pathToFile2);
 
     $data1 = parse($fileData1, $type);
     $data2 = parse($fileData2, $type);
 
-    var_dump($data1);
+    $diff = getDiff($data1, $data2);
 
-    exit();
-
-    ksort($data1);
-    ksort($data2);
-
-    $resultStrArr = [];
-
-    foreach ($data1 as $key => $value) {
-        if (!array_key_exists($key, $data2)) {
-            $resultStrArr[] = str_repeat(" ", 2) . "- {$key}: " . varToString($data1[$key]);
-        } else {
-            if ($data1[$key] === $data2[$key]) {
-                $resultStrArr[] = str_repeat(" ", 4) . "{$key}: " . varToString($data1[$key]);
-            } else {
-                $resultStrArr[] = str_repeat(" ", 2) . "- {$key}: " . varToString($data1[$key]);
-                $resultStrArr[] = str_repeat(" ", 2) . "+ {$key}: " . varToString($data2[$key]);
-            }
-
-            unset($data2[$key]);
-        }
-    }
-
-    if (count($data2) > 0) {
-        foreach ($data2 as $key => $value) {
-            $resultStrArr[] = str_repeat(" ", 2) . "+ {$key}: " . varToString($data2[$key]);
-        }
-    }
-
-    return "{\n" . join("\n", $resultStrArr) . "\n}\n";
+    return format($diff, $format);
 }
 
-function varToString($var)
+function getFileInfo($pathToFile)
 {
-    if (is_bool($var)) {
-        return var_export($var, true);
-    } else {
-        return strval($var);
+    $data = file_get_contents($pathToFile);
+    $type = pathinfo($pathToFile, PATHINFO_EXTENSION);
+
+    return [$data, $type];
+}
+
+function getDiff($obj1, $obj2)
+{
+    $diff = [];
+
+    $keys1 = array_keys(get_object_vars($obj1));
+    $keys2 = array_keys(get_object_vars($obj2));
+
+    $keys = array_unique(array_merge($keys1, $keys2));
+    sort($keys);
+
+    foreach ($keys as $key) {
+        if (property_exists($obj1, $key) && !property_exists($obj2, $key)) {
+            $diff[] = makeDiffItem($key, 'removed', $obj1->$key, null);
+        }
+
+        if (!property_exists($obj1, $key) && property_exists($obj2, $key)) {
+            $diff[] = makeDiffItem($key, 'added', null, $obj2->$key);
+        }
+
+        if (property_exists($obj1, $key) && property_exists($obj2, $key)) {
+            if (is_object($obj1->$key) && is_object($obj2->$key)) {
+                $diff[] = makeDiffItem($key, 'nested', null, null, getDiff($obj1->$key, $obj2->$key));
+            } else {
+                if ($obj1->$key === $obj2->$key) {
+                    $diff[] = makeDiffItem($key, 'not-changed', $obj1->$key, $obj2->$key);
+                } else {
+                    $diff[] = makeDiffItem($key, 'changed', $obj1->$key, $obj2->$key);
+                }
+            }
+        }
     }
+
+    return $diff;
+}
+
+function makeDiffItem($name, $type, $prevValue, $newValue, $children = null)
+{
+    return [
+        'name' => $name,
+        'type' => $type,
+        'prevValue' => $prevValue,
+        'newValue' => $newValue,
+        'children' => $children
+    ];
 }
