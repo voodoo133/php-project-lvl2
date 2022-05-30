@@ -6,43 +6,47 @@ use function GenDiff\genDiff;
 
 class GenDiffTest extends TestCase
 {
-    protected function getFixtureFile(string $format, string $type, string $fileName): string
+    protected function getFixtureFile(...$pathParams): string
     {
-        $dirs = [__DIR__, 'fixtures', $format, $type, $fileName];
+        $filePathParams = [__DIR__, 'fixtures', ...$pathParams];
 
-        return implode(DIRECTORY_SEPARATOR, $dirs);
+        return implode(DIRECTORY_SEPARATOR, $filePathParams);
     }
 
     /**
      * @dataProvider filesProvider
      */
-    public function testGenDiff(string $file1, string $file2, string $expectedFile): void
+    public function testGenDiff(string $file1, string $file2, string $format, string $expectedFile): void
     {
-        $this->assertEquals(file_get_contents($expectedFile), genDiff($file1, $file2));
+        $this->assertEquals(file_get_contents($expectedFile), genDiff($file1, $file2, $format));
     }
 
     public function filesProvider(): array
     {
         return [
             [
-                $this->getFixtureFile('json', 'simple', 'file1.json'), 
-                $this->getFixtureFile('json', 'simple', 'file2.json'),
-                $this->getFixtureFile('json', 'simple', 'result.txt')
+                $this->getFixtureFile('json', 'file1.json'), 
+                $this->getFixtureFile('json', 'file2.json'),
+                'stylish',
+                $this->getFixtureFile('result', 'stylish.txt')
             ],
             [
-                $this->getFixtureFile('yaml', 'simple', 'file1.yml'), 
-                $this->getFixtureFile('yaml', 'simple', 'file2.yml'),
-                $this->getFixtureFile('yaml', 'simple', 'result.txt')
+                $this->getFixtureFile('yaml', 'file1.yml'), 
+                $this->getFixtureFile('yaml', 'file2.yml'),
+                'stylish',
+                $this->getFixtureFile('result', 'stylish.txt')
             ],
             [
-                $this->getFixtureFile('json', 'recursive', 'file1.json'), 
-                $this->getFixtureFile('json', 'recursive', 'file2.json'),
-                $this->getFixtureFile('json', 'recursive', 'result.txt')
+                $this->getFixtureFile('json', 'file1.json'), 
+                $this->getFixtureFile('json', 'file2.json'),
+                'plain',
+                $this->getFixtureFile('result', 'plain.txt')
             ],
             [
-                $this->getFixtureFile('yaml', 'recursive', 'file1.yml'), 
-                $this->getFixtureFile('yaml', 'recursive', 'file2.yml'),
-                $this->getFixtureFile('yaml', 'recursive', 'result.txt')
+                $this->getFixtureFile('yaml', 'file1.yml'), 
+                $this->getFixtureFile('yaml', 'file2.yml'),
+                'plain',
+                $this->getFixtureFile('result', 'plain.txt')
             ]
         ];
     }
