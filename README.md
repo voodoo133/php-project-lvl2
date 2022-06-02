@@ -25,5 +25,9 @@
     <a target="_blank" rel="noopener noreferrer" href="/images/gendiff-plain-format.gif">
       <img src="/images/gendiff-plain-format.gif" alt="gendiff-plain-format" style="max-width:100%;">
     </a>
+    <h4>JSON format:</h4>
+    <a target="_blank" rel="noopener noreferrer" href="/images/gendiff-json-format.gif">
+      <img src="/images/gendiff-json-format.gif" alt="gendiff-json-format" style="max-width:100%;">
+    </a>
   </li>
 </ul>
