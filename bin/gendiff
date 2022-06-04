@@ -1,6 +1,9 @@
 #!/usr/bin/env php
 <?php  
 
+use function Differ\Differ\makeCLIInterface;
+use function Differ\Differ\genDiff;
+
 $autoloadPathV1 = '../vendor/autoload.php';
 $autoloadPathV2 = __DIR__ . "/../../../autoload.php";
 $autoloadPathV3 = __DIR__ . "\\..\\..\\..\\autoload.php";
@@ -13,18 +16,11 @@ if (file_exists($autoloadPathV1)) {
     require_once $autoloadPathV3;
 }
 
-use function Differ\Differ\makeCLIInterface;
-use function Differ\Differ\genDiff;
-
 $docoptResponse = makeCLIInterface();
 
-try {
-    if (isset($docoptResponse->args['<firstFile>']) && $docoptResponse->args['<secondFile>']) {
-        $diff = genDiff($docoptResponse->args['<firstFile>'], $docoptResponse->args['<secondFile>'], $docoptResponse->args['--format']);
-        echo $diff;
-    }
-} catch (\Exception $e) {
-    exit("Error: {$e->getMessage()}\n");
+if (isset($docoptResponse->args['<firstFile>']) && $docoptResponse->args['<secondFile>']) {
+    $diff = genDiff($docoptResponse->args['<firstFile>'], $docoptResponse->args['<secondFile>'], $docoptResponse->args['--format']);
+    echo $diff;
 }
 
 ?>
