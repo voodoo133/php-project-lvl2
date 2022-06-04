@@ -3,7 +3,7 @@
 
 use function Differ\Differ\genDiff;
 
-$autoloadPathV1 = '../vendor/autoload.php';
+$autoloadPathV1 = __DIR__ . '/../vendor/autoload.php';
 $autoloadPathV2 = __DIR__ . "/../../../autoload.php";
 $autoloadPathV3 = __DIR__ . "\\..\\..\\..\\autoload.php";
 

@@ -15,7 +15,6 @@
     ],
     "autoload": {
         "files": [
-            "src/makeCLIInterface.php",
             "src/genDiff.php",
             "src/Parsers.php",
             "src/Formatters.php",
