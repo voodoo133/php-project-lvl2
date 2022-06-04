@@ -1,6 +1,6 @@
 <?php
 
-namespace GenDiff\Formatters\Plain;
+namespace Differ\Differ\Formatters\Plain;
 
 function format($diff)
 {

@@ -13,8 +13,8 @@ if (file_exists($autoloadPathV1)) {
     require_once $autoloadPathV3;
 }
 
-use function Gendiff\makeCLIInterface;
-use function Gendiff\genDiff;
+use function Differ\Differ\makeCLIInterface;
+use function Differ\Differ\genDiff;
 
 $docoptResponse = makeCLIInterface();
 
