@@ -1,8 +1,9 @@
-<?php 
+<?php
 
 namespace Differ\Differ\Tests
 
 use PHPUnit\Framework\TestCase;
+
 use function Differ\Differ\genDiff;
 
 class GenDiffTest extends TestCase
@@ -50,13 +51,13 @@ class GenDiffTest extends TestCase
                 $this->getFixtureFile('result', 'plain.txt')
             ],
             [
-                $this->getFixtureFile('json', 'file1.json'), 
+                $this->getFixtureFile('json', 'file1.json'),
                 $this->getFixtureFile('json', 'file2.json'),
                 'json',
                 $this->getFixtureFile('result', 'json.txt')
             ],
             [
-                $this->getFixtureFile('yaml', 'file1.yml'), 
+                $this->getFixtureFile('yaml', 'file1.yml'),
                 $this->getFixtureFile('yaml', 'file2.yml'),
                 'json',
                 $this->getFixtureFile('result', 'json.txt')
