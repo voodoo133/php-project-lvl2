@@ -1,31 +1,39 @@
 #!/usr/bin/env php
 <?php  
 
-use function Differ\Differ\makeCLIInterface;
 use function Differ\Differ\genDiff;
 
-try {
-    $autoloadPathV1 = '../vendor/autoload.php';
-    $autoloadPathV2 = __DIR__ . "/../../../autoload.php";
-    $autoloadPathV3 = __DIR__ . "\\..\\..\\..\\autoload.php";
+$autoloadPathV1 = '../vendor/autoload.php';
+$autoloadPathV2 = __DIR__ . "/../../../autoload.php";
+$autoloadPathV3 = __DIR__ . "\\..\\..\\..\\autoload.php";
 
-    if (file_exists($autoloadPathV1)) {
-        require_once $autoloadPathV1;
-    } elseif (file_exists($autoloadPathV2)) {
-        require_once $autoloadPathV2;
-    } else {
-        require_once $autoloadPathV3;
-    }
-
-    $docoptResponse = makeCLIInterface();
-
-    if (isset($docoptResponse->args['<firstFile>']) && $docoptResponse->args['<secondFile>']) {
-        $diff = genDiff($docoptResponse->args['<firstFile>'], $docoptResponse->args['<secondFile>'], $docoptResponse->args['--format']);
-        echo $diff;
-    }
-} catch (\Exception $e) {
-    exit("Error: {$e->getMessage()}\n");
+if (file_exists($autoloadPathV1)) {
+    require_once $autoloadPathV1;
+} elseif (file_exists($autoloadPathV2)) {
+    require_once $autoloadPathV2;
+} else {
+    require_once $autoloadPathV3;
 }
 
+$doc = <<<DOC
+Generate diff
+
+Usage:
+  gendiff (-h|--help)
+  gendiff (-v|--version)
+  gendiff [--format <fmt>] <firstFile> <secondFile>
+
+Options:
+  -h --help                     Show this screen
+  -v --version                  Show version
+  --format <fmt>                Report format [default: stylish]
+DOC;
+
+$args = Docopt::handle($doc);
+
+if (isset($args->args['<firstFile>']) && $args->args['<secondFile>']) {
+    $diff = genDiff($args->args['<firstFile>'], $args->args['<secondFile>'], $args->args['--format']);
+    echo $diff;
+}
 
 ?>
