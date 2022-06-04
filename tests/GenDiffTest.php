@@ -1,8 +1,9 @@
 <?php 
 
+namespace Differ\Differ\Tests
+
 use PHPUnit\Framework\TestCase;
 use function Differ\Differ\genDiff;
-
 
 class GenDiffTest extends TestCase
 {
@@ -25,25 +26,25 @@ class GenDiffTest extends TestCase
     {
         return [
             [
-                $this->getFixtureFile('json', 'file1.json'), 
+                $this->getFixtureFile('json', 'file1.json'),
                 $this->getFixtureFile('json', 'file2.json'),
                 'stylish',
                 $this->getFixtureFile('result', 'stylish.txt')
             ],
             [
-                $this->getFixtureFile('yaml', 'file1.yml'), 
+                $this->getFixtureFile('yaml', 'file1.yml'),
                 $this->getFixtureFile('yaml', 'file2.yml'),
                 'stylish',
                 $this->getFixtureFile('result', 'stylish.txt')
             ],
             [
-                $this->getFixtureFile('json', 'file1.json'), 
+                $this->getFixtureFile('json', 'file1.json'),
                 $this->getFixtureFile('json', 'file2.json'),
                 'plain',
                 $this->getFixtureFile('result', 'plain.txt')
             ],
             [
-                $this->getFixtureFile('yaml', 'file1.yml'), 
+                $this->getFixtureFile('yaml', 'file1.yml'),
                 $this->getFixtureFile('yaml', 'file2.yml'),
                 'plain',
                 $this->getFixtureFile('result', 'plain.txt')
