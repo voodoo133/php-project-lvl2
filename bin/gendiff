@@ -18,7 +18,13 @@ use function Differ\Differ\genDiff;
 
 $docoptResponse = makeCLIInterface();
 
-$diff = genDiff($docoptResponse->args['<firstFile>'], $docoptResponse->args['<secondFile>'], $docoptResponse->args['--format']);
-echo $diff;
+try {
+    if (isset($docoptResponse->args['<firstFile>']) && $docoptResponse->args['<secondFile>']) {
+        $diff = genDiff($docoptResponse->args['<firstFile>'], $docoptResponse->args['<secondFile>'], $docoptResponse->args['--format']);
+        echo $diff;
+    }
+} catch (\Exception $e) {
+    exit("Error: {$e->getMessage()}\n");
+}
 
 ?>
