@@ -52,7 +52,7 @@ function makeIndent(int $depth)
     return str_repeat(" ", 4 * $depth);
 }
 
-function valueToString($val, int $depth)
+function valueToString(mixed $val, int $depth)
 {
     switch (true) {
         case is_bool($val):

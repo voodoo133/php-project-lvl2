@@ -58,7 +58,7 @@ function getDiff(object $obj1, object $obj2)
     }, $sortedKeys);
 }
 
-function makeDiffItem(string $name, string $type, $prevValue, $newValue, ?array $children = null)
+function makeDiffItem(string $name, string $type, mixed $prevValue, mixed $newValue, ?array $children = null)
 {
     return [
         'name' => $name,

@@ -47,7 +47,7 @@ function format(array $diff)
 }
 
 
-function valueToString($val)
+function valueToString(mixed $val)
 {
     switch (true) {
         case is_bool($val):
