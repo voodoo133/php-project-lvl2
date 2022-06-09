@@ -4,11 +4,12 @@ namespace Differ\Differ;
 
 use function Differ\Differ\Parsers\parse;
 use function Differ\Differ\Formatters\format;
+use function Functional\sort;
 
-function genDiff($pathToFile1, $pathToFile2, $format = 'stylish')
+function genDiff(string $pathToFile1, string $pathToFile2, string $format = 'stylish')
 {
     [$fileData1, $type] = getFileInfo($pathToFile1);
-    [$fileData2, $type] = getFileInfo($pathToFile2);
+    [$fileData2] = getFileInfo($pathToFile2);
 
     $data1 = parse($fileData1, $type);
     $data2 = parse($fileData2, $type);
@@ -18,7 +19,7 @@ function genDiff($pathToFile1, $pathToFile2, $format = 'stylish')
     return format($diff, $format);
 }
 
-function getFileInfo($pathToFile)
+function getFileInfo(string $pathToFile)
 {
     $data = file_get_contents($pathToFile);
     $type = pathinfo($pathToFile, PATHINFO_EXTENSION);
@@ -26,42 +27,38 @@ function getFileInfo($pathToFile)
     return [$data, $type];
 }
 
-function getDiff($obj1, $obj2)
+function getDiff(object $obj1, object $obj2)
 {
-    $diff = [];
-
     $keys1 = array_keys(get_object_vars($obj1));
     $keys2 = array_keys(get_object_vars($obj2));
 
     $keys = array_unique(array_merge($keys1, $keys2));
-    sort($keys);
+    $sortedKeys = sort($keys, fn ($left, $right) => strcmp($left, $right));
 
-    foreach ($keys as $key) {
+    return array_map(function ($key) use ($obj1, $obj2) {
         if (property_exists($obj1, $key) && !property_exists($obj2, $key)) {
-            $diff[] = makeDiffItem($key, 'removed', $obj1->$key, null);
+            return makeDiffItem($key, 'removed', $obj1->$key, null);
         }
 
         if (!property_exists($obj1, $key) && property_exists($obj2, $key)) {
-            $diff[] = makeDiffItem($key, 'added', null, $obj2->$key);
+            return makeDiffItem($key, 'added', null, $obj2->$key);
         }
 
         if (property_exists($obj1, $key) && property_exists($obj2, $key)) {
             if (is_object($obj1->$key) && is_object($obj2->$key)) {
-                $diff[] = makeDiffItem($key, 'nested', null, null, getDiff($obj1->$key, $obj2->$key));
+                return makeDiffItem($key, 'nested', null, null, getDiff($obj1->$key, $obj2->$key));
             } else {
                 if ($obj1->$key === $obj2->$key) {
-                    $diff[] = makeDiffItem($key, 'not-changed', $obj1->$key, $obj2->$key);
+                    return makeDiffItem($key, 'not-changed', $obj1->$key, $obj2->$key);
                 } else {
-                    $diff[] = makeDiffItem($key, 'changed', $obj1->$key, $obj2->$key);
+                    return makeDiffItem($key, 'changed', $obj1->$key, $obj2->$key);
                 }
             }
         }
-    }
-
-    return $diff;
+    }, $sortedKeys);
 }
 
-function makeDiffItem($name, $type, $prevValue, $newValue, $children = null)
+function makeDiffItem(string $name, string $type, $prevValue, $newValue, ?array $children = null)
 {
     return [
         'name' => $name,

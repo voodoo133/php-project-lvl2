@@ -6,7 +6,7 @@ use function Differ\Differ\Formatters\Plain\format as plain;
 use function Differ\Differ\Formatters\Json\format as json;
 use function Differ\Differ\Formatters\Stylish\format as stylish;
 
-function format($diff, $type = 'stylish')
+function format(array $diff, string $type = 'stylish')
 {
     switch ($type) {
         case 'plain':

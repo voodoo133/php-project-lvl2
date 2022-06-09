@@ -2,7 +2,7 @@
 
 namespace Differ\Differ\Formatters\Stylish;
 
-function format($diff)
+function format(array $diff)
 {
     $iter = function ($currDiff, $depth) use (&$iter) {
         $closeBracketIndent = makeIndent($depth - 1);
@@ -22,21 +22,17 @@ function format($diff)
             switch ($type) {
                 case 'added':
                     return "{$changedIntent}+ {$name}: " . valueToString($newValue, $depth);
-                    break;
 
                 case 'removed':
                     return "{$changedIntent}- {$name}: " . valueToString($prevValue, $depth);
-                    break;
 
                 case 'not-changed':
                     return "{$unchangedIndent}{$name}: " . valueToString($prevValue, $depth);
-                    break;
 
                 case 'changed':
                     $removedStr = "{$changedIntent}- {$name}: " . valueToString($prevValue, $depth);
                     $addedStr = "{$changedIntent}+ {$name}: " . valueToString($newValue, $depth);
                     return "{$removedStr}\n{$addedStr}";
-                    break;
 
                 case 'nested':
                     return "{$unchangedIndent}{$name}: " . $iter($children, $depth + 1);
@@ -51,21 +47,19 @@ function format($diff)
     return $iter($diff, 1);
 }
 
-function makeIndent($depth)
+function makeIndent(int $depth)
 {
     return str_repeat(" ", 4 * $depth);
 }
 
-function valueToString($val, $depth)
+function valueToString($val, int $depth)
 {
     switch (true) {
         case is_bool($val):
             return var_export($val, true);
-            break;
 
         case is_null($val):
             return 'null';
-            break;
 
         case is_object($val):
             $indent = makeIndent($depth + 1);
@@ -81,10 +75,7 @@ function valueToString($val, $depth)
 
             return join("\n", $result);
 
-            break;
-
         default:
             return strval($val);
-            break;
     }
 }
